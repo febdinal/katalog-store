@@ -2,7 +2,50 @@
 // app/helpers.php
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/database.php';
 require_once __DIR__ . '/auth.php';
+
+function getSetting(string $key, string $default = ''): string {
+    $db = getDb();
+    try {
+        $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = :key");
+        $stmt->execute([':key' => $key]);
+        $val = $stmt->fetchColumn();
+        return ($val !== false && $val !== null) ? (string)$val : $default;
+    } catch (\Throwable $e) {
+        try {
+            $db->exec("CREATE TABLE IF NOT EXISTS settings (
+                setting_key VARCHAR(100) PRIMARY KEY,
+                setting_value TEXT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = :key");
+            $stmt->execute([':key' => $key]);
+            $val = $stmt->fetchColumn();
+            return ($val !== false && $val !== null) ? (string)$val : $default;
+        } catch (\Throwable $ex) {
+            return $default;
+        }
+    }
+}
+
+function setSetting(string $key, string $value): void {
+    $db = getDb();
+    try {
+        $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (:key, :value) ON DUPLICATE KEY UPDATE setting_value = :value_update");
+        $stmt->execute([':key' => $key, ':value' => $value, ':value_update' => $value]);
+    } catch (\Throwable $e) {
+        $db->exec("CREATE TABLE IF NOT EXISTS settings (
+            setting_key VARCHAR(100) PRIMARY KEY,
+            setting_value TEXT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (:key, :value) ON DUPLICATE KEY UPDATE setting_value = :value_update");
+        $stmt->execute([':key' => $key, ':value' => $value, ':value_update' => $value]);
+    }
+}
 
 function sanitize(?string $value): string {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
@@ -73,6 +116,7 @@ function renderAdminHeader(string $activeNav = ''): void {
     $productsActive = ($activeNav === 'products') ? ' active' : '';
     $categoriesActive = ($activeNav === 'categories') ? ' active' : '';
     $backgroundActive = ($activeNav === 'background') ? ' active' : '';
+    $musicActive = ($activeNav === 'music') ? ' active' : '';
     
     echo <<<HTML
   <!-- Admin Header -->
@@ -99,6 +143,7 @@ function renderAdminHeader(string $activeNav = ''): void {
         <a href="/admin/products/" class="admin-nav-item{$productsActive}">Produk</a>
         <a href="/admin/categories/" class="admin-nav-item{$categoriesActive}">Kategori</a>
         <a href="/admin/background.php" class="admin-nav-item{$backgroundActive}">Background</a>
+        <a href="/admin/music.php" class="admin-nav-item{$musicActive}">Musik</a>
         <a href="/" target="_blank" rel="noopener noreferrer" class="admin-nav-item">Lihat Web</a>
         <a href="/admin/logout.php" class="admin-nav-item logout-link">Keluar</a>
       </nav>
@@ -129,6 +174,7 @@ function renderAdminHeader(string $activeNav = ''): void {
       <a href="/admin/products/" class="admin-drawer-item{$productsActive}">Produk</a>
       <a href="/admin/categories/" class="admin-drawer-item{$categoriesActive}">Kategori</a>
       <a href="/admin/background.php" class="admin-drawer-item{$backgroundActive}">Background</a>
+      <a href="/admin/music.php" class="admin-drawer-item{$musicActive}">Musik</a>
       <a href="/" target="_blank" rel="noopener noreferrer" class="admin-drawer-item">Lihat Web</a>
       <a href="/admin/logout.php" class="admin-drawer-item logout-link">Keluar</a>
     </nav>

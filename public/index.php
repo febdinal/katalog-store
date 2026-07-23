@@ -70,6 +70,11 @@ if (!empty($selectedCategorySlug)) {
         }
     }
 }
+
+// Background Music Settings
+$bgMusicUrl = getSetting('bg_music_url', 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3');
+$bgMusicEnabled = getSetting('bg_music_enabled', '1');
+$bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -200,8 +205,9 @@ if (!empty($selectedCategorySlug)) {
               </span>
             </div>
             <div class="product-body">
-              <span class="product-brand"><?= sanitize($prod['brand']) ?></span>
-              <h2 class="product-name" title="<?= sanitize($prod['name']) ?>"><?= sanitize($prod['name']) ?></h2>
+              <h2 class="product-title"><?= sanitize($prod['name']) ?></h2>
+              <p class="product-brand"><?= sanitize($prod['brand']) ?></p>
+              
               <div class="product-footer">
                 <span class="product-price"><?= formatRupiah($prod['price']) ?></span>
                 <span class="product-qty">Stok: <?= (int)$prod['quantity'] ?></span>
@@ -219,37 +225,37 @@ if (!empty($selectedCategorySlug)) {
       <?php if ($totalPages > 1): ?>
         <nav class="pagination-wrapper" aria-label="Navigasi Halaman">
           <?php if ($page > 1): ?>
-            <a href="/?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>" class="page-item" id="page-prev">&laquo; Prev</a>
+            <a href="/?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>" class="page-item" aria-label="Halaman Sebelumnya">&laquo; Prev</a>
           <?php else: ?>
-            <span class="page-item disabled">&laquo; Prev</span>
+            <span class="page-item disabled" aria-disabled="true">&laquo; Prev</span>
           <?php endif; ?>
 
           <?php for ($i = 1; $i <= $totalPages; $i++): ?>
             <a href="/?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>" 
-               class="page-item <?= $i === $page ? 'active' : '' ?>">
+               class="page-item <?= $i === $page ? 'active' : '' ?>" 
+               <?= $i === $page ? 'aria-current="page"' : '' ?>>
               <?= $i ?>
             </a>
           <?php endfor; ?>
 
           <?php if ($page < $totalPages): ?>
-            <a href="/?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>" class="page-item" id="page-next">Next &raquo;</a>
+            <a href="/?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>" class="page-item" aria-label="Halaman Selanjutnya">Next &raquo;</a>
           <?php else: ?>
-            <span class="page-item disabled">Next &raquo;</span>
+            <span class="page-item disabled" aria-disabled="true">Next &raquo;</span>
           <?php endif; ?>
         </nav>
       <?php endif; ?>
 
     <?php else: ?>
-      <!-- Empty State -->
-      <div class="empty-state" id="empty-state">
+      <div class="empty-state">
         <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          <line x1="8" y1="11" x2="14" y2="11"></line>
+          <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
         </svg>
-        <h2 class="empty-state-title">Produk tidak ditemukan</h2>
-        <p class="empty-state-text">Tidak ada produk aktif dalam kategori ini saat ini.</p>
-        <a href="/" class="btn-primary" id="btn-reset-filter">Tampilkan Semua Produk</a>
+        <h2 class="empty-state-title">Belum ada produk</h2>
+        <p class="empty-state-text">Produk untuk kategori ini tidak ditemukan atau belum ditambahkan.</p>
+        <?php if (!empty($selectedCategorySlug)): ?>
+          <a href="/" class="btn-primary">Lihat Semua Produk</a>
+        <?php endif; ?>
       </div>
     <?php endif; ?>
 
@@ -258,6 +264,32 @@ if (!empty($selectedCategorySlug)) {
   <footer class="site-footer">
     <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Made with ❤️ by febdinal 😎</p>
   </footer>
+
+  <!-- Floating Background Music Player Button (Glassmorphism) -->
+  <?php if ($bgMusicEnabled === '1' && !empty($bgMusicUrl)): ?>
+    <audio id="bg-music-player" loop preload="metadata" data-autoplay="<?= $bgMusicAutoplay ?>">
+      <source src="<?= sanitize($bgMusicUrl) ?>" type="audio/mpeg">
+    </audio>
+    
+    <button type="button" 
+            class="floating-music-btn" 
+            id="floating-music-btn" 
+            aria-label="Putar / Hentikan Musik Latar" 
+            title="Putar / Hentikan Musik Latar">
+      <span class="music-disc-wrap">
+        <!-- SVG Play Icon -->
+        <svg class="music-icon icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="6 3 20 12 6 21 6 3"></polygon>
+        </svg>
+        <!-- SVG Pause Icon -->
+        <svg class="music-icon icon-pause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+          <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+          <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+        </svg>
+      </span>
+      <span class="music-wave-ring" aria-hidden="true"></span>
+    </button>
+  <?php endif; ?>
 
   <!-- Floating WhatsApp Button -->
   <a href="https://wa.me/62895395806025?text=Halo%2C%20saya%20ingin%20bertanya%20mengenai%20produk%20di%20katalog" 

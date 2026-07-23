@@ -671,6 +671,106 @@ a.product-card:focus-visible,
   border: 1px solid var(--stock-red-border);
 }
 
+/* Floating Glassmorphism Background Music Button */
+.floating-music-btn {
+  position: fixed;
+  bottom: calc(max(1.25rem, env(safe-area-inset-bottom)) + 68px);
+  right: max(1.25rem, env(safe-area-inset-right));
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 252, 248, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 
+    0 8px 24px rgba(35, 31, 32, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 98;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+  padding: 0;
+}
+
+.floating-music-btn:hover {
+  transform: scale(1.08);
+  background: rgba(255, 252, 248, 0.92);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 12px 30px rgba(236, 72, 153, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.floating-music-btn:active {
+  transform: scale(0.94);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.2);
+}
+
+.floating-music-btn:focus-visible {
+  outline: 3px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+.music-disc-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.music-icon {
+  width: 22px;
+  height: 22px;
+  fill: var(--accent-primary);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+/* Playing State Micro-Animations */
+.floating-music-btn.is-playing {
+  border-color: var(--accent-primary);
+  box-shadow: 
+    0 0 0 3px rgba(236, 72, 153, 0.2),
+    0 8px 24px rgba(236, 72, 153, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.floating-music-btn.is-playing .music-disc-wrap {
+  animation: musicSpin 4s linear infinite;
+}
+
+.floating-music-btn.is-playing .music-wave-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-primary);
+  opacity: 0.6;
+  animation: musicPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes musicSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes musicPulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.18); opacity: 0.15; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
 /* Floating WhatsApp Button */
 .floating-wa-btn {
   position: fixed;

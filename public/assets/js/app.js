@@ -35,4 +35,83 @@ document.addEventListener('DOMContentLoaded', () => {
   if (activeCategoryPill) {
     activeCategoryPill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
+
+  // ---------------------------------------------------------------------------
+  // Background Music Controller (Glassmorphism Floating Player)
+  // ---------------------------------------------------------------------------
+  const musicAudio = document.getElementById('bg-music-player');
+  const musicBtn = document.getElementById('floating-music-btn');
+
+  if (musicAudio && musicBtn) {
+    const playIcon = musicBtn.querySelector('.icon-play');
+    const pauseIcon = musicBtn.querySelector('.icon-pause');
+
+    function updateUI(isPlaying) {
+      if (isPlaying) {
+        musicBtn.classList.add('is-playing');
+        if (playIcon) playIcon.style.display = 'none';
+        if (pauseIcon) pauseIcon.style.display = 'block';
+        musicBtn.setAttribute('title', 'Hentikan Musik Latar');
+      } else {
+        musicBtn.classList.remove('is-playing');
+        if (playIcon) playIcon.style.display = 'block';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+        musicBtn.setAttribute('title', 'Putar Musik Latar');
+      }
+    }
+
+    function playAudio() {
+      musicAudio.play().then(() => {
+        sessionStorage.setItem('bg_music_state', 'playing');
+        updateUI(true);
+      }).catch(err => {
+        console.warn('Autoplay terhalang oleh kebijakan browser:', err);
+        sessionStorage.setItem('bg_music_state', 'paused');
+        updateUI(false);
+      });
+    }
+
+    function pauseAudio() {
+      musicAudio.pause();
+      sessionStorage.setItem('bg_music_state', 'paused');
+      updateUI(false);
+    }
+
+    function toggleAudio() {
+      if (musicAudio.paused) {
+        playAudio();
+      } else {
+        pauseAudio();
+      }
+    }
+
+    musicBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleAudio();
+    });
+
+    const savedState = sessionStorage.getItem('bg_music_state');
+    const isAutoplayEnabled = musicAudio.dataset.autoplay === '1';
+
+    if (savedState === 'playing') {
+      playAudio();
+    } else if (savedState === null && isAutoplayEnabled) {
+      playAudio();
+    } else {
+      updateUI(false);
+    }
+
+    // Auto-resume audio on first user gesture if browser blocked initial autoplay
+    const handleFirstUserInteraction = () => {
+      if (sessionStorage.getItem('bg_music_state') === 'playing' && musicAudio.paused) {
+        playAudio();
+      }
+      document.removeEventListener('click', handleFirstUserInteraction);
+      document.removeEventListener('touchstart', handleFirstUserInteraction);
+    };
+
+    document.addEventListener('click', handleFirstUserInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstUserInteraction, { once: true });
+  }
 });
+
