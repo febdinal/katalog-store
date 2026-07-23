@@ -61,14 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playAudio() {
-      musicAudio.play().then(() => {
-        sessionStorage.setItem('bg_music_state', 'playing');
-        updateUI(true);
-      }).catch(err => {
-        console.warn('Autoplay terhalang oleh kebijakan browser:', err);
-        sessionStorage.setItem('bg_music_state', 'paused');
-        updateUI(false);
-      });
+      const playPromise = musicAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          sessionStorage.setItem('bg_music_state', 'playing');
+          updateUI(true);
+        }).catch(err => {
+          console.warn('Autoplay terhalang oleh kebijakan browser. Musik akan diputar saat interaksi pertama:', err);
+          updateUI(false);
+        });
+      }
     }
 
     function pauseAudio() {
@@ -79,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleAudio() {
       if (musicAudio.paused) {
+        sessionStorage.setItem('bg_music_state', 'playing');
         playAudio();
       } else {
         pauseAudio();
@@ -93,25 +96,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedState = sessionStorage.getItem('bg_music_state');
     const isAutoplayEnabled = musicAudio.dataset.autoplay === '1';
 
-    if (savedState === 'playing') {
+    // If user has not explicitly paused, attempt autoplay
+    if (savedState !== 'paused' && isAutoplayEnabled) {
       playAudio();
-    } else if (savedState === null && isAutoplayEnabled) {
+    } else if (savedState === 'playing') {
       playAudio();
     } else {
       updateUI(false);
     }
 
-    // Auto-resume audio on first user gesture if browser blocked initial autoplay
+    // Auto-start audio on the very first user interaction anywhere on the website if browser blocked initial load play
     const handleFirstUserInteraction = () => {
-      if (sessionStorage.getItem('bg_music_state') === 'playing' && musicAudio.paused) {
+      if (musicAudio.paused && sessionStorage.getItem('bg_music_state') !== 'paused') {
         playAudio();
       }
-      document.removeEventListener('click', handleFirstUserInteraction);
-      document.removeEventListener('touchstart', handleFirstUserInteraction);
+      removeInteractionListeners();
     };
 
-    document.addEventListener('click', handleFirstUserInteraction, { once: true });
-    document.addEventListener('touchstart', handleFirstUserInteraction, { once: true });
+    function removeInteractionListeners() {
+      ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(evt => {
+        document.removeEventListener(evt, handleFirstUserInteraction);
+      });
+    }
+
+    if (savedState !== 'paused') {
+      ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(evt => {
+        document.addEventListener(evt, handleFirstUserInteraction, { once: true, passive: true });
+      });
+    }
   }
 });
 

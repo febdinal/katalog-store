@@ -267,7 +267,7 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
 
   <!-- Floating Background Music Player Button (Glassmorphism) -->
   <?php if ($bgMusicEnabled === '1' && !empty($bgMusicUrl)): ?>
-    <audio id="bg-music-player" loop preload="metadata" data-autoplay="<?= $bgMusicAutoplay ?>">
+    <audio id="bg-music-player" autoplay loop preload="auto" data-autoplay="<?= $bgMusicAutoplay ?>">
       <source src="<?= sanitize($bgMusicUrl) ?>" type="audio/mpeg">
     </audio>
     
