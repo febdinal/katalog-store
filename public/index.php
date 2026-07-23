@@ -206,7 +206,7 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
             </div>
             <div class="product-body">
               <p class="product-brand"><?= sanitize($prod['brand']) ?></p>
-              <h2 class="product-title"><?= sanitize($prod['name']) ?></h2>
+              <h4 class="product-title"><?= sanitize($prod['name']) ?></h4>
               
               <div class="product-footer">
                 <span class="product-price"><?= formatRupiah($prod['price']) ?></span>
