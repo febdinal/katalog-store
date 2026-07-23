@@ -99,7 +99,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const savedState = sessionStorage.getItem('bg_music_state');
+    const savedTime = sessionStorage.getItem('bg_music_time');
     const isAutoplayEnabled = musicAudio.dataset.autoplay === '1';
+
+    // Restore saved playback timestamp if available
+    if (savedTime && !isNaN(parseFloat(savedTime))) {
+      try {
+        musicAudio.currentTime = parseFloat(savedTime);
+      } catch (e) {}
+    }
+
+    // Save playback timestamp periodically
+    musicAudio.addEventListener('timeupdate', () => {
+      if (!musicAudio.paused) {
+        sessionStorage.setItem('bg_music_time', musicAudio.currentTime);
+      }
+    });
 
     // If user has not explicitly paused, attempt autoplay
     if (savedState !== 'user_paused' && isAutoplayEnabled) {
@@ -121,5 +136,78 @@ document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener(evt, handleFirstUserInteraction, { passive: true });
     });
   }
+
+  // ---------------------------------------------------------------------------
+  // Seamless SPA Navigation (Category Filters & Pagination Links)
+  // Keeps background music playing continuously without page reload!
+  // ---------------------------------------------------------------------------
+  function attachDynamicNavigation() {
+    const mainWrapper = document.querySelector('.main-wrapper');
+    if (!mainWrapper) return;
+
+    const navLinks = mainWrapper.querySelectorAll('a.category-pill, a.page-item, .empty-state a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (!href || href.startsWith('http') || href.startsWith('//') || this.getAttribute('target') === '_blank' || href.startsWith('#')) {
+          return;
+        }
+
+        e.preventDefault();
+        loadCatalogPage(href);
+      });
+    });
+  }
+
+  function loadCatalogPage(url, isPopState = false) {
+    const mainWrapper = document.querySelector('.main-wrapper');
+    if (!mainWrapper) {
+      window.location.href = url;
+      return;
+    }
+
+    // Subtle loading feedback
+    mainWrapper.style.opacity = '0.55';
+    mainWrapper.style.transition = 'opacity 0.15s ease';
+
+    fetch(url)
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newMainWrapper = doc.querySelector('.main-wrapper');
+
+        if (newMainWrapper) {
+          mainWrapper.innerHTML = newMainWrapper.innerHTML;
+          if (!isPopState) {
+            history.pushState({}, '', url);
+          }
+          // Scroll active category into view
+          const activePill = mainWrapper.querySelector('.category-pill.active');
+          if (activePill) {
+            activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+          // Re-bind dynamic SPA link listeners
+          attachDynamicNavigation();
+        } else {
+          window.location.href = url;
+        }
+      })
+      .catch(() => {
+        window.location.href = url;
+      })
+      .finally(() => {
+        mainWrapper.style.opacity = '1';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+  }
+
+  // Handle Browser Back & Forward Buttons
+  window.addEventListener('popstate', () => {
+    loadCatalogPage(window.location.pathname + window.location.search, true);
+  });
+
+  attachDynamicNavigation();
 });
+
 
