@@ -13,15 +13,15 @@ web
 
 ## Product Purpose
 
-A lightweight, high-performance, mobile-first product catalog web application built with PHP 8.2+ Native, SQLite, Vanilla CSS, and Vanilla JavaScript. It delivers an intuitive shopping catalog experience for visitors and an efficient management dashboard for catalog administrators without external framework overhead.
+A lightweight, high-performance, mobile-first product catalog web application built with PHP 8.2+ Native, MySQL (PDO), Vanilla CSS, and Vanilla JavaScript. It delivers an intuitive shopping catalog experience for visitors and an efficient management dashboard for catalog administrators without external framework overhead.
 
 ## Positioning
 
-A zero-framework, dependency-free PHP catalog platform with strict security, instant SQLite storage, single public document root isolation, and a bespoke retail UI design optimized for mobile ergonomics.
+A zero-framework, dependency-free PHP catalog platform with strict security, PDO MySQL storage, single public document root isolation, and a bespoke retail UI design optimized for mobile ergonomics.
 
 ## Operating Context
 
-- **Environment:** PHP 8.2+ with SQLite3 extension, hosted on web servers (e.g. Laragon / Nginx / Apache / PHP built-in server) with `public/` as the single public document root.
+- **Environment:** PHP 8.2+ with PDO MySQL extension, hosted on web servers (e.g. Laragon / Nginx / Apache / PHP built-in server) with `public/` as the single public document root.
 - **Client Devices:** Viewports ranging from mobile phones (375px), tablets (768px), to desktop monitors (1024px+). Primary focus on mobile touch interactions (minimum touch target 44px).
 
 ## Capabilities and Constraints
@@ -41,7 +41,7 @@ A zero-framework, dependency-free PHP catalog platform with strict security, ins
 - **Image Upload:** Secure upload handling for product photos (JPG, PNG, WebP up to 2MB, MIME verification via `finfo`, randomized filenames, automatic cleanup of replaced/deleted photos).
 
 ### Technical & Architectural Constraints
-- **Stack:** PHP 8.2+ Native, SQLite, HTML5, Vanilla CSS, Vanilla JavaScript.
+- **Stack:** PHP 8.2+ Native, MySQL (PDO), HTML5, Vanilla CSS, Vanilla JavaScript.
 - **Strict Bans:** No Laravel, React, Vue, Angular, Bootstrap, Tailwind, or unnecessary Composer packages.
 - **Forbidden Features:** No shopping cart, checkout, online payment, or user registration.
 - **Structure:** `public/` directory is the ONLY document root. All database, application logic, and configuration reside safely outside `public/`.
@@ -63,7 +63,7 @@ A zero-framework, dependency-free PHP catalog platform with strict security, ins
 ## Product Principles
 
 1. **Mobile-First Ergonomics:** Touch targets >= 44px, horizontally scrollable filters, fast touch response, clear visual hierarchy.
-2. **Zero-Dependency Architecture:** Clean, readable native PHP 8.2+ with PDO SQLite and Vanilla CSS custom properties.
+2. **Zero-Dependency Architecture:** Clean, readable native PHP 8.2+ with PDO MySQL and Vanilla CSS custom properties.
 3. **Defense-in-Depth Security:** PDO prepared statements everywhere, `password_hash()` / `password_verify()`, session regeneration on login, CSRF tokens on all POST forms, `htmlspecialchars()` XSS protection, HttpOnly/SameSite session cookies, strict MIME file upload validation.
 4. **Scannability & Price Prominence:** Product titles truncated to 2 lines max, stock badges clearly color-coded, price presented as primary visual metric.
 

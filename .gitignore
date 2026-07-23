@@ -1,0 +1,22 @@
+# Katalog Store — .gitignore
+
+# Local config (contains database credentials)
+app/config.local.php
+
+# SQLite database file (legacy)
+database/catalog.sqlite
+database/*.sqlite
+
+# PHP compiled files
+*.php~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
