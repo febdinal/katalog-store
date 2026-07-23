@@ -4,6 +4,10 @@
 require_once __DIR__ . '/../app/config.php';
 require_once __DIR__ . '/../app/database.php';
 require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../app/tracker.php';
+
+// Record visit
+trackVisit();
 
 $db = getDb();
 

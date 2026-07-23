@@ -24,6 +24,44 @@ $recentProducts = $db->query("
     ORDER BY p.id DESC
     LIMIT 5
 ")->fetchAll();
+
+// Website Visit Statistics (Timezone: Asia/Jakarta)
+$tz = new DateTimeZone('Asia/Jakarta');
+$todayDate = (new DateTime('now', $tz))->format('Y-m-d');
+
+try {
+    // Today's Visits & Today's Unique Visitors
+    $todayStmt = $db->prepare("
+        SELECT COALESCE(SUM(page_views), 0) as today_views, COUNT(*) as today_uniques 
+        FROM website_visits 
+        WHERE visit_date = :today
+    ");
+    $todayStmt->execute([':today' => $todayDate]);
+    $todayStats = $todayStmt->fetch();
+    $todayViews = (int)($todayStats['today_views'] ?? 0);
+    $todayUniques = (int)($todayStats['today_uniques'] ?? 0);
+
+    // Total Visits & Total Unique Visitors
+    $totalViews = (int)$db->query("SELECT COALESCE(SUM(page_views), 0) FROM website_visits")->fetchColumn();
+    $totalUniques = (int)$db->query("SELECT COUNT(DISTINCT visitor_hash) FROM website_visits")->fetchColumn();
+
+    // Last 7 Days Visits Summary Table
+    $recentVisitsStmt = $db->prepare("
+        SELECT visit_date, SUM(page_views) as total_views, COUNT(*) as unique_visitors
+        FROM website_visits
+        WHERE visit_date >= DATE_SUB(:today, INTERVAL 6 DAY)
+        GROUP BY visit_date
+        ORDER BY visit_date DESC
+    ");
+    $recentVisitsStmt->execute([':today' => $todayDate]);
+    $recentVisits = $recentVisitsStmt->fetchAll();
+} catch (\PDOException $e) {
+    $todayViews = 0;
+    $todayUniques = 0;
+    $totalViews = 0;
+    $totalUniques = 0;
+    $recentVisits = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -33,7 +71,7 @@ $recentProducts = $db->query("
   <title>Dashboard Admin - <?= SITE_NAME ?></title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
-    <script src="/assets/js/admin.js" defer></script>
+  <script src="/assets/js/admin.js" defer></script>
 </head>
 <body>
 
@@ -56,24 +94,96 @@ $recentProducts = $db->query("
       </div>
     </div>
 
-    <!-- Stats Grid -->
+    <!-- Product Stats Grid -->
     <div class="admin-stats-grid">
       <div class="stat-card">
         <div class="stat-label">Total Produk</div>
-        <div class="stat-value"><?= $totalProducts ?></div>
+        <div class="stat-value"><?= number_format($totalProducts, 0, ',', '.') ?></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Kategori</div>
-        <div class="stat-value"><?= $totalCategories ?></div>
+        <div class="stat-value"><?= number_format($totalCategories, 0, ',', '.') ?></div>
       </div>
       <div class="stat-card" style="border-left: 4px solid var(--stock-green-text);">
         <div class="stat-label" style="color: var(--stock-green-text);">Stok Tersedia (>0)</div>
-        <div class="stat-value" style="color: var(--stock-green-text);"><?= $stockAvailable ?></div>
+        <div class="stat-value" style="color: var(--stock-green-text);"><?= number_format($stockAvailable, 0, ',', '.') ?></div>
       </div>
       <div class="stat-card" style="border-left: 4px solid var(--stock-red-text);">
         <div class="stat-label" style="color: var(--stock-red-text);">Stok Habis (0)</div>
-        <div class="stat-value" style="color: var(--stock-red-text);"><?= $stockOut ?></div>
+        <div class="stat-value" style="color: var(--stock-red-text);"><?= number_format($stockOut, 0, ',', '.') ?></div>
       </div>
+    </div>
+
+    <!-- Visit Statistics Header & Grid -->
+    <div style="margin-top: 2rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">Statistik Kunjungan Website</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Lalu lintas pengunjung terenkripsi &amp; real-time (Timezone: Asia/Jakarta)</p>
+    </div>
+
+    <!-- Visit Stats Grid -->
+    <div class="admin-stats-grid" style="margin-bottom: 1.5rem;">
+      <div class="stat-card">
+        <div class="stat-label">Kunjungan Hari Ini</div>
+        <div class="stat-value"><?= number_format($todayViews, 0, ',', '.') ?></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pengunjung Unik Hari Ini</div>
+        <div class="stat-value"><?= number_format($todayUniques, 0, ',', '.') ?></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Kunjungan</div>
+        <div class="stat-value"><?= number_format($totalViews, 0, ',', '.') ?></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Pengunjung Unik</div>
+        <div class="stat-value"><?= number_format($totalUniques, 0, ',', '.') ?></div>
+      </div>
+    </div>
+
+    <!-- Last 7 Days Visits Summary Table -->
+    <div class="card-panel" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main);">Lalu Lintas 7 Hari Terakhir</h3>
+        <span class="product-stock-badge badge-stock-available" style="position: static; font-size: 0.75rem;">Realtime (WIB)</span>
+      </div>
+
+      <?php if (!empty($recentVisits)): ?>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Total Kunjungan (Page Views)</th>
+                <th>Pengunjung Unik</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($recentVisits as $visit): ?>
+                <?php 
+                  $dt = new DateTime($visit['visit_date'], $tz);
+                  $formattedDate = $dt->format('d M Y');
+                  $isToday = ($visit['visit_date'] === $todayDate);
+                ?>
+                <tr>
+                  <td>
+                    <strong><?= $formattedDate ?></strong>
+                    <?php if ($isToday): ?>
+                      <span class="product-stock-badge badge-stock-available" style="position: static; margin-left: 0.5rem; font-size: 0.7rem;">Hari Ini</span>
+                    <?php endif; ?>
+                  </td>
+                  <td><?= number_format((int)$visit['total_views'], 0, ',', '.') ?> views</td>
+                  <td><?= number_format((int)$visit['unique_visitors'], 0, ',', '.') ?> pengunjung</td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php else: ?>
+        <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted);">
+          <p style="font-size: 0.9rem; font-weight: 600;">Belum Ada Data Kunjungan</p>
+          <p style="font-size: 0.8rem; margin-top: 0.25rem;">Data statistik akan otomatis tercatat ketika ada pengunjung yang membuka katalog publik.</p>
+        </div>
+      <?php endif; ?>
     </div>
 
     <!-- Recent Products Table -->
@@ -121,3 +231,4 @@ $recentProducts = $db->query("
 
 </body>
 </html>
+
