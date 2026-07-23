@@ -161,6 +161,7 @@ if (!empty($selectedCategorySlug)) {
       <section class="product-grid" id="product-grid-container">
         <?php foreach ($products as $prod): ?>
           <?php 
+            $isSoldOut = ((int)$prod['quantity'] <= 0);
             $stock = calculateStockStatus((int)$prod['quantity']);
             $imageUrl = getProductImageUrl($prod['image_path']);
             $message = rawurlencode('Saya ingin ' . $prod['name']);
@@ -168,16 +169,23 @@ if (!empty($selectedCategorySlug)) {
             $soldOutImagePath = PUBLIC_DIR . '/assets/image/soldout.png';
             $hasSoldOutImage = file_exists($soldOutImagePath);
           ?>
-          <a href="<?= sanitize($whatsappUrl) ?>" 
-             target="_blank" 
-             rel="noopener noreferrer" 
-             class="product-card" 
-             id="product-card-<?= $prod['id'] ?>"
-             aria-label="Tanyakan produk <?= sanitize($prod['name']) ?> melalui WhatsApp">
+          <?php if ($isSoldOut): ?>
+            <div class="product-card product-card-soldout" 
+                 id="product-card-<?= $prod['id'] ?>"
+                 aria-label="Produk <?= sanitize($prod['name']) ?> (Stok Habis)"
+                 aria-disabled="true">
+          <?php else: ?>
+            <a href="<?= sanitize($whatsappUrl) ?>" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="product-card" 
+               id="product-card-<?= $prod['id'] ?>"
+               aria-label="Tanyakan produk <?= sanitize($prod['name']) ?> melalui WhatsApp">
+          <?php endif; ?>
             <div class="product-image-wrap">
               <img src="<?= sanitize($imageUrl) ?>" alt="<?= sanitize($prod['name']) ?>" loading="lazy">
               
-              <?php if ((int)$prod['quantity'] === 0): ?>
+              <?php if ($isSoldOut): ?>
                 <div class="soldout-overlay" aria-hidden="true">
                   <?php if ($hasSoldOutImage): ?>
                     <img src="/assets/image/soldout.png" alt="" class="soldout-img">
@@ -199,7 +207,11 @@ if (!empty($selectedCategorySlug)) {
                 <span class="product-qty">Stok: <?= (int)$prod['quantity'] ?></span>
               </div>
             </div>
-          </a>
+          <?php if ($isSoldOut): ?>
+            </div>
+          <?php else: ?>
+            </a>
+          <?php endif; ?>
         <?php endforeach; ?>
       </section>
 

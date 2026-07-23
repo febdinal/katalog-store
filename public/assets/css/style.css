@@ -572,22 +572,31 @@ a.product-card,
 
 @media (hover: hover) and (pointer: fine) {
 
-  a.product-card:hover,
-  .product-card:hover {
+  a.product-card:not(.product-card-soldout):hover,
+  .product-card:not(.product-card-soldout):hover {
     transform: translateY(-3px);
     box-shadow: 0 14px 36px rgba(35, 31, 32, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.75);
     border-color: rgba(255, 255, 255, 0.85);
   }
 }
 
-a.product-card:active,
-.product-card:active {
+a.product-card:not(.product-card-soldout):active,
+.product-card:not(.product-card-soldout):active {
   transform: scale(0.99);
 }
 
-a.product-card:focus-visible {
+a.product-card:focus-visible,
+.product-card:focus-visible {
   outline: 3px solid var(--accent-primary);
   outline-offset: 3px;
+}
+
+/* Sold Out Product Card Disabled State */
+.product-card.product-card-soldout {
+  cursor: not-allowed;
+  opacity: 0.85;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .product-image-wrap {
