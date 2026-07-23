@@ -13,9 +13,9 @@
   --text-muted: #64748B;
   --text-light: #94A3B8;
 
-  --accent-primary: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-light: #EFF6FF;
+  --accent-primary: #EC4899;
+  --accent-hover: #DB2777;
+  --accent-light: #FDF2F8;
 
   --border-color: #E2E8F0;
   --border-light: #F1F5F9;
@@ -142,7 +142,7 @@ img {
 }
 
 .admin-brand-logo svg {
-  color: #3B82F6;
+  color: #EC4899;
   flex-shrink: 0;
 }
 
@@ -168,7 +168,7 @@ img {
 }
 
 .admin-menu-toggle:focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #EC4899;
   outline-offset: 2px;
   background: rgba(255, 255, 255, 0.1);
 }
@@ -325,7 +325,7 @@ img {
 }
 
 .admin-drawer-close:focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid #EC4899;
   outline-offset: 2px;
 }
 
@@ -361,8 +361,8 @@ img {
 
 .admin-drawer-item.active {
   color: #FFFFFF;
-  background: var(--accent-primary, #2563EB);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  background: var(--accent-primary, #EC4899);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
 }
 
 .admin-drawer-item.logout-link {
@@ -503,7 +503,7 @@ body.menu-open {
   background: var(--accent-primary);
   color: #FFFFFF;
   border-color: var(--accent-primary);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
 }
 
 /* Catalog Info Bar */
@@ -1127,7 +1127,7 @@ a.product-card:focus-visible,
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
-  border: 2px dashed rgba(37, 99, 235, 0.35);
+  border: 2px dashed rgba(236, 72, 153, 0.35);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(8px);
@@ -1142,7 +1142,7 @@ a.product-card:focus-visible,
 .glass-file-zone:focus-within {
   border-color: var(--accent-primary);
   background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.12);
 }
 
 .glass-file-input {
@@ -1172,7 +1172,7 @@ a.product-card:focus-visible,
 .glass-file-control:focus {
   outline: none;
   border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
   background: rgba(255, 255, 255, 0.9);
 }
 
@@ -1180,8 +1180,8 @@ a.product-card:focus-visible,
   padding: 0.4rem 0.85rem;
   margin-right: 0.875rem;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(37, 99, 235, 0.3);
-  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  background: rgba(236, 72, 153, 0.1);
   color: var(--accent-primary);
   font-weight: 600;
   font-size: 0.825rem;
