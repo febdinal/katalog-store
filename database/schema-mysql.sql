@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `fk_products_category`
     FOREIGN KEY (`category_id`)
     REFERENCES `categories` (`id`)
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4

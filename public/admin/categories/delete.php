@@ -30,6 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // Explicitly delete products in this category
+            $deleteProductsStmt = $db->prepare("DELETE FROM products WHERE category_id = :id");
+            $deleteProductsStmt->execute([':id' => $id]);
+
             $stmt = $db->prepare("DELETE FROM categories WHERE id = :id");
             $stmt->execute([':id' => $id]);
 
