@@ -256,7 +256,7 @@ if (!empty($selectedCategorySlug)) {
   </main>
 
   <footer class="site-footer">
-    <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Mobile-First Product Catalog.</p>
+    <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Made with ❤️ by febdinal 😎</p>
   </footer>
 
   <!-- Floating WhatsApp Button -->
