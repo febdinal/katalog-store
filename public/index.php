@@ -86,15 +86,52 @@ if (!empty($selectedCategorySlug)) {
   <!-- Site Header -->
   <header class="site-header">
     <div class="header-container">
-      <a href="/" class="brand-logo" id="header-brand-link">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <path d="M16 10a4 4 0 0 1-8 0"></path>
-        </svg>
-        <span>Salma Store</span>
-      </a>
-    </div>
+  <a href="/" class="brand-logo" id="header-brand-link">
+    <!-- Icon boneka teddy bear -->
+    <svg
+      class="brand-icon"
+      width="30"
+      height="30"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <!-- Telinga -->
+      <circle cx="6.5" cy="5.5" r="2.5"></circle>
+      <circle cx="17.5" cy="5.5" r="2.5"></circle>
+
+      <!-- Kepala -->
+      <circle cx="12" cy="9" r="6"></circle>
+
+      <!-- Mata -->
+      <circle cx="9.5" cy="8.5" r="0.65" fill="currentColor" stroke="none"></circle>
+      <circle cx="14.5" cy="8.5" r="0.65" fill="currentColor" stroke="none"></circle>
+
+      <!-- Moncong dan mulut -->
+      <ellipse cx="12" cy="11.5" rx="2.2" ry="1.7"></ellipse>
+      <circle cx="12" cy="11" r="0.55" fill="currentColor" stroke="none"></circle>
+      <path d="M12 11.5v1"></path>
+      <path d="M10.8 12.5c.7.7 1.7.7 2.4 0"></path>
+
+      <!-- Badan -->
+      <path d="M8 14.2C6.8 15.3 6.2 17 6.5 19c.3 2 2.3 3 5.5 3s5.2-1 5.5-3c.3-2-.3-3.7-1.5-4.8"></path>
+
+      <!-- Tangan -->
+      <path d="M7.2 16.2 4.5 18"></path>
+      <path d="m16.8 16.2 2.7 1.8"></path>
+
+      <!-- Kaki -->
+      <path d="M9 21.5 8 23"></path>
+      <path d="m15 21.5 1 1.5"></path>
+    </svg>
+
+    <span>Salma Store</span>
+  </a>
+</div>
   </header>
 
   <!-- Main Catalog Content -->

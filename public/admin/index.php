@@ -33,30 +33,11 @@ $recentProducts = $db->query("
   <title>Dashboard Admin - <?= SITE_NAME ?></title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
+    <script src="/assets/js/admin.js" defer></script>
 </head>
 <body>
 
-  <!-- Admin Header -->
-  <header class="site-header admin-header">
-    <div class="header-container">
-      <a href="/admin/index.php" class="brand-logo">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-        <span>Admin Dashboard</span>
-      </a>
-      <nav class="admin-nav">
-        <a href="/admin/index.php" class="admin-nav-item active">Overview</a>
-        <a href="/admin/products/" class="admin-nav-item">Produk</a>
-        <a href="/admin/categories/" class="admin-nav-item">Kategori</a>
-        <a href="/" target="_blank" class="admin-nav-item">Lihat Web</a>
-        <a href="/admin/logout.php" class="admin-nav-item" style="color: #FCA5A5;">Keluar</a>
-      </nav>
-    </div>
-  </header>
+<?php renderAdminHeader('overview'); ?>
 
   <main class="main-wrapper">
     <?php if ($flash): ?>

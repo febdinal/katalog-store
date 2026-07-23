@@ -28,22 +28,11 @@ $categories = $db->query("
   <title>Kelola Kategori - <?= SITE_NAME ?></title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
+<script src="/assets/js/admin.js" defer></script>
 </head>
 <body>
 
-  <header class="site-header admin-header">
-    <div class="header-container">
-      <a href="/admin/index.php" class="brand-logo">
-        <span>Admin Dashboard</span>
-      </a>
-      <nav class="admin-nav">
-        <a href="/admin/index.php" class="admin-nav-item">Overview</a>
-        <a href="/admin/products/" class="admin-nav-item">Produk</a>
-        <a href="/admin/categories/" class="admin-nav-item active">Kategori</a>
-        <a href="/admin/logout.php" class="admin-nav-item" style="color: #FCA5A5;">Keluar</a>
-      </nav>
-    </div>
-  </header>
+<?php renderAdminHeader('categories'); ?>
 
   <main class="main-wrapper">
     <?php if ($flash): ?>

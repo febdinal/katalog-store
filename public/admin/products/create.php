@@ -74,22 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Tambah Produk - <?= SITE_NAME ?></title>
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
+  <script src="/assets/js/admin.js" defer></script>
 </head>
 <body>
 
-  <header class="site-header admin-header">
-    <div class="header-container">
-      <a href="/admin/index.php" class="brand-logo">
-        <span>Admin Dashboard</span>
-      </a>
-      <nav class="admin-nav">
-        <a href="/admin/index.php" class="admin-nav-item">Overview</a>
-        <a href="/admin/products/" class="admin-nav-item active">Produk</a>
-        <a href="/admin/categories/" class="admin-nav-item">Kategori</a>
-        <a href="/admin/logout.php" class="admin-nav-item" style="color: #FCA5A5;">Keluar</a>
-      </nav>
-    </div>
-  </header>
+<?php renderAdminHeader('products'); ?>
 
   <main class="main-wrapper" style="max-width: 720px;">
     <div style="margin-bottom: 1rem;">
