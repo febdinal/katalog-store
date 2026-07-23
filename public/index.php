@@ -83,8 +83,8 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= sanitize($currentCategoryName) ?> - <?= SITE_NAME ?></title>
   <meta name="description" content="Katalog produk retail pilihan dengan harga terbaik, stok realtime, dan transaksi cepat.">
-  <link rel="stylesheet" href="/assets/css/style.css">
-  <script src="/assets/js/app.js" defer></script>
+  <link rel="stylesheet" href="/assets/css/style.css?v=<?= file_exists(PUBLIC_DIR . '/assets/css/style.css') ? filemtime(PUBLIC_DIR . '/assets/css/style.css') : time() ?>">
+  <script src="/assets/js/app.js?v=<?= file_exists(PUBLIC_DIR . '/assets/js/app.js') ? filemtime(PUBLIC_DIR . '/assets/js/app.js') : time() ?>" defer></script>
 </head>
 <body>
 

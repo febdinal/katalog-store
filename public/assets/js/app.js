@@ -46,6 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const playIcon = musicBtn.querySelector('.icon-play');
     const pauseIcon = musicBtn.querySelector('.icon-pause');
 
+    // Clean legacy 'paused' state from old code if present
+    if (sessionStorage.getItem('bg_music_state') === 'paused') {
+      sessionStorage.removeItem('bg_music_state');
+    }
+
     function updateUI(isPlaying) {
       if (isPlaying) {
         musicBtn.classList.add('is-playing');
@@ -75,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function pauseAudio() {
       musicAudio.pause();
-      sessionStorage.setItem('bg_music_state', 'paused');
+      sessionStorage.setItem('bg_music_state', 'user_paused');
       updateUI(false);
     }
 
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isAutoplayEnabled = musicAudio.dataset.autoplay === '1';
 
     // If user has not explicitly paused, attempt autoplay
-    if (savedState !== 'paused' && isAutoplayEnabled) {
+    if (savedState !== 'user_paused' && isAutoplayEnabled) {
       playAudio();
     } else if (savedState === 'playing') {
       playAudio();
@@ -105,25 +110,16 @@ document.addEventListener('DOMContentLoaded', () => {
       updateUI(false);
     }
 
-    // Auto-start audio on the very first user interaction anywhere on the website if browser blocked initial load play
+    // Auto-start audio on the very first user interaction anywhere on the website (click, tap, scroll, keypress)
     const handleFirstUserInteraction = () => {
-      if (musicAudio.paused && sessionStorage.getItem('bg_music_state') !== 'paused') {
+      if (musicAudio.paused && sessionStorage.getItem('bg_music_state') !== 'user_paused') {
         playAudio();
       }
-      removeInteractionListeners();
     };
 
-    function removeInteractionListeners() {
-      ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(evt => {
-        document.removeEventListener(evt, handleFirstUserInteraction);
-      });
-    }
-
-    if (savedState !== 'paused') {
-      ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(evt => {
-        document.addEventListener(evt, handleFirstUserInteraction, { once: true, passive: true });
-      });
-    }
+    ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(evt => {
+      document.addEventListener(evt, handleFirstUserInteraction, { passive: true });
+    });
   }
 });
 
