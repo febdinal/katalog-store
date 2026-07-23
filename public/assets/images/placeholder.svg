@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500" fill="none">
+  <rect width="400" height="500" fill="#F1F5F9"/>
+  <rect x="140" y="180" width="120" height="120" rx="24" fill="#E2E8F0"/>
+  <path d="M175 225L190 240L205 220L225 245H175V225Z" fill="#94A3B8"/>
+  <circle cx="215" cy="215" r="8" fill="#94A3B8"/>
+  <text x="200" y="340" font-family="Plus Jakarta Sans, sans-serif" font-size="14" font-weight="600" fill="#64748B" text-anchor="middle">Foto Produk</text>
+</svg>
