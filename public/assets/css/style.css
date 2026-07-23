@@ -594,7 +594,6 @@ a.product-card:focus-visible,
 /* Sold Out Product Card Disabled State */
 .product-card.product-card-soldout {
   cursor: not-allowed;
-  opacity: 0.85;
   user-select: none;
   -webkit-user-select: none;
 }
