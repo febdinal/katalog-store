@@ -41,7 +41,7 @@ if ($stockStatus === 'out') {
 $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
 $productsSql = "
-    SELECT p.id, p.name, p.brand, p.price, p.quantity, p.image_path, p.is_active,
+    SELECT p.id, p.name, p.brand, p.price, p.original_price, p.quantity, p.image_path, p.is_active,
            c.name as category_name
     FROM products p
     JOIN categories c ON p.category_id = c.id
@@ -59,9 +59,10 @@ $products = $stmt->fetchAll();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Produk - <?= SITE_NAME ?></title>
+  <link rel="icon" type="image/png" href="/assets/image/favicon.png?v=<?= file_exists(PUBLIC_DIR . '/assets/image/favicon.png') ? filemtime(PUBLIC_DIR . '/assets/image/favicon.png') : time() ?>">
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
-<script src="/assets/js/admin.js" defer></script>
+  <script src="/assets/js/admin.js" defer></script>
 </head>
 <body>
 
@@ -150,7 +151,12 @@ $products = $stmt->fetchAll();
                     <div style="font-size: 0.75rem; color: var(--text-muted);"><?= sanitize($prod['brand']) ?></div>
                   </td>
                   <td><?= sanitize($prod['category_name']) ?></td>
-                  <td><strong><?= formatRupiah($prod['price']) ?></strong></td>
+                  <td>
+                    <?php if ($prod['original_price'] !== null && (float)$prod['original_price'] > (float)$prod['price']): ?>
+                      <div style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through; line-height: 1.1;"><?= formatRupiah($prod['original_price']) ?></div>
+                    <?php endif; ?>
+                    <strong><?= formatRupiah($prod['price']) ?></strong>
+                  </td>
                   <td><?= (int)$prod['quantity'] ?> unit</td>
                   <td>
                     <span class="product-stock-badge <?= $stock['class'] ?>" style="position: static;">

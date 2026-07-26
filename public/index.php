@@ -1,10 +1,11 @@
-<?php
 // public/index.php
 
 require_once __DIR__ . '/../app/config.php';
 require_once __DIR__ . '/../app/database.php';
 require_once __DIR__ . '/../app/helpers.php';
 require_once __DIR__ . '/../app/tracker.php';
+
+ensureDatabaseSchema();
 
 // Record visit
 trackVisit();
@@ -47,7 +48,7 @@ $offset = ($page - 1) * ITEMS_PER_PAGE;
 
 // Fetch products for current page
 $productsSql = "
-    SELECT p.id, p.name, p.brand, p.price, p.quantity, p.image_path, c.name as category_name, c.slug as category_slug
+    SELECT p.id, p.name, p.brand, p.price, p.original_price, p.quantity, p.image_path, c.name as category_name, c.slug as category_slug
     FROM products p
     JOIN categories c ON p.category_id = c.id
     {$whereClause}
@@ -79,6 +80,11 @@ if (!empty($selectedCategorySlug)) {
 $bgMusicUrl = getSetting('bg_music_url', 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3');
 $bgMusicEnabled = getSetting('bg_music_enabled', '1');
 $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
+
+// Announcement / Note Modal Settings
+$announcementEnabled = getSetting('announcement_modal_enabled', '1');
+$announcementTitle = getSetting('announcement_modal_title', 'Catatan & Informasi Toko');
+$announcementContent = getSetting('announcement_modal_content', "Selamat datang di Salma Store!\n\nKami menyediakan berbagai produk pilihan berkualitas dengan harga terbaik. Silakan telusuri katalog kami dan klik tombol WhatsApp pada produk untuk melakukan pemesanan secara cepat.");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -87,6 +93,7 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= sanitize($currentCategoryName) ?> - <?= SITE_NAME ?></title>
   <meta name="description" content="Katalog produk retail pilihan dengan harga terbaik, stok realtime, dan transaksi cepat.">
+  <link rel="icon" type="image/png" href="/assets/image/favicon.png?v=<?= file_exists(PUBLIC_DIR . '/assets/image/favicon.png') ? filemtime(PUBLIC_DIR . '/assets/image/favicon.png') : time() ?>">
   <link rel="stylesheet" href="/assets/css/style.css?v=<?= file_exists(PUBLIC_DIR . '/assets/css/style.css') ? filemtime(PUBLIC_DIR . '/assets/css/style.css') : time() ?>">
   <script src="/assets/js/app.js?v=<?= file_exists(PUBLIC_DIR . '/assets/js/app.js') ? filemtime(PUBLIC_DIR . '/assets/js/app.js') : time() ?>" defer></script>
 </head>
@@ -162,7 +169,20 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
     <!-- Catalog Meta Bar -->
     <div class="catalog-meta-bar">
       <h1 class="catalog-title"><?= sanitize($currentCategoryName) ?></h1>
-      <span class="catalog-count"><?= $totalProducts ?> produk</span>
+      <div class="catalog-meta-right">
+        <span class="catalog-count"><?= $totalProducts ?> produk</span>
+        <?php if ($announcementEnabled === '1'): ?>
+          <button type="button" class="btn-open-note" id="btn-open-note" title="Lihat Catatan Toko">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <span>Catatan Toko</span>
+          </button>
+        <?php endif; ?>
+      </div>
     </div>
 
     <!-- Product Grid -->
@@ -177,6 +197,8 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
             $whatsappUrl = 'https://wa.me/62895395806025?text=' . $message;
             $soldOutImagePath = PUBLIC_DIR . '/assets/image/soldout.png';
             $hasSoldOutImage = file_exists($soldOutImagePath);
+            $hasOriginalPrice = ($prod['original_price'] !== null && (float)$prod['original_price'] > (float)$prod['price']);
+            $discountPct = $hasOriginalPrice ? round((((float)$prod['original_price'] - (float)$prod['price']) / (float)$prod['original_price']) * 100) : 0;
           ?>
           <?php if ($isSoldOut): ?>
             <div class="product-card product-card-soldout" 
@@ -202,6 +224,8 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
                     <span class="soldout-text-fallback">SOLD OUT</span>
                   <?php endif; ?>
                 </div>
+              <?php elseif ($hasOriginalPrice && $discountPct > 0): ?>
+                <span class="product-discount-badge">-<?= $discountPct ?>%</span>
               <?php endif; ?>
 
               <span class="product-stock-badge <?= $stock['class'] ?>">
@@ -213,7 +237,12 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
               <h4 class="product-title"><?= sanitize($prod['name']) ?></h4>
               
               <div class="product-footer">
-                <span class="product-price"><?= formatRupiah($prod['price']) ?></span>
+                <div class="product-price-box">
+                  <?php if ($hasOriginalPrice): ?>
+                    <span class="product-original-price"><?= formatRupiah($prod['original_price']) ?></span>
+                  <?php endif; ?>
+                  <span class="product-price"><?= formatRupiah($prod['price']) ?></span>
+                </div>
                 <span class="product-qty">Stok: <?= (int)$prod['quantity'] ?></span>
               </div>
             </div>
@@ -268,6 +297,39 @@ $bgMusicAutoplay = getSetting('bg_music_autoplay', '1');
   <footer class="site-footer">
     <p>&copy; <?= date('Y') ?> <?= SITE_NAME ?>. Made with ❤️ by febdinal 😎</p>
   </footer>
+
+  <!-- Announcement Glassmorphism Modal -->
+  <?php if ($announcementEnabled === '1'): ?>
+    <div id="announcement-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title" style="display: none;">
+      <div class="glass-modal-card">
+        <div class="glass-modal-header">
+          <div class="glass-modal-title-wrap">
+            <svg class="glass-modal-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <h3 id="modal-title" class="glass-modal-title"><?= sanitize($announcementTitle) ?></h3>
+          </div>
+          <button type="button" class="glass-modal-close" id="btn-close-modal" aria-label="Tutup catatan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="glass-modal-body">
+          <div class="glass-modal-content">
+            <?= nl2br(sanitize($announcementContent)) ?>
+          </div>
+        </div>
+        <div class="glass-modal-footer">
+          <button type="button" class="glass-modal-btn" id="btn-ack-modal">Saya Mengerti</button>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
 
   <!-- Floating Background Music Player Button (Glassmorphism) -->
   <?php if ($bgMusicEnabled === '1' && !empty($bgMusicUrl)): ?>

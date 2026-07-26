@@ -6,7 +6,7 @@ define('APP_DIR', __DIR__);
 define('PUBLIC_DIR', ROOT_DIR . '/public');
 define('UPLOADS_DIR', PUBLIC_DIR . '/uploads/products');
 
-define('SITE_NAME', 'Katalog Produk');
+define('SITE_NAME', 'Salma Store');
 define('ITEMS_PER_PAGE', 12);
 
 // Stock threshold definitions

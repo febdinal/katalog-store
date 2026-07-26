@@ -110,6 +110,7 @@ $bgUrl = '/assets/images/bg.png?v=' . $bgVersion;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubah Background - Admin</title>
+    <link rel="icon" type="image/png" href="/assets/image/favicon.png?v=<?= file_exists(PUBLIC_DIR . '/assets/image/favicon.png') ? filemtime(PUBLIC_DIR . '/assets/image/favicon.png') : time() ?>">
     <link rel="stylesheet" href="/assets/css/style.css">
     <script src="/assets/js/app.js" defer></script>
     <script src="/assets/js/admin.js" defer></script>

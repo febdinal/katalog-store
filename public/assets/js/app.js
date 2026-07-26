@@ -138,6 +138,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---------------------------------------------------------------------------
+  // Announcement Glassmorphism Modal Controller
+  // ---------------------------------------------------------------------------
+  function initAnnouncementModal() {
+    const modal = document.getElementById('announcement-modal');
+    if (!modal) return;
+
+    const btnClose = document.getElementById('btn-close-modal');
+    const btnAck = document.getElementById('btn-ack-modal');
+    const btnOpenNote = document.getElementById('btn-open-note');
+
+    function openModal() {
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      sessionStorage.setItem('announcement_modal_dismissed', '1');
+    }
+
+    // Show modal automatically on entrance if not dismissed in session
+    if (!sessionStorage.getItem('announcement_modal_dismissed')) {
+      openModal();
+    }
+
+    if (btnClose) {
+      btnClose.onclick = closeModal;
+    }
+    if (btnAck) {
+      btnAck.onclick = closeModal;
+    }
+
+    // Close on background click
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    };
+
+    // Close on ESC key
+    document.onkeydown = (e) => {
+      if (e.key === 'Escape' && modal.style.display !== 'none') {
+        closeModal();
+      }
+    };
+
+    if (btnOpenNote) {
+      btnOpenNote.onclick = () => {
+        openModal();
+      };
+    }
+  }
+
+  initAnnouncementModal();
+
+  // ---------------------------------------------------------------------------
   // Seamless SPA Navigation (Category Filters & Pagination Links)
   // Keeps background music playing continuously without page reload!
   // ---------------------------------------------------------------------------
@@ -187,8 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (activePill) {
             activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
           }
-          // Re-bind dynamic SPA link listeners
+          // Re-bind dynamic SPA link listeners & note modal triggers
           attachDynamicNavigation();
+          initAnnouncementModal();
         } else {
           window.location.href = url;
         }

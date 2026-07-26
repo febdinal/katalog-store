@@ -55,6 +55,16 @@ function validateProduct(array $input): array {
     $quantity = filter_var($input['quantity'] ?? null, FILTER_VALIDATE_INT);
     $isActive = isset($input['is_active']) ? 1 : 0;
 
+    $originalPrice = null;
+    if (isset($input['original_price']) && trim((string)$input['original_price']) !== '') {
+        $val = filter_var($input['original_price'], FILTER_VALIDATE_FLOAT);
+        if ($val === false || $val < 0) {
+            $errors['original_price'] = 'Harga coret/original harus berupa angka minimal 0.';
+        } else {
+            $originalPrice = $val;
+        }
+    }
+
     if (empty($name)) {
         $errors['name'] = 'Nama produk wajib diisi.';
     } elseif (mb_strlen($name) > 150) {
@@ -94,6 +104,7 @@ function validateProduct(array $input): array {
             'brand' => $brand,
             'category_id' => $categoryId,
             'price' => $price,
+            'original_price' => $originalPrice,
             'quantity' => $quantity,
             'is_active' => $isActive
         ]

@@ -520,10 +520,214 @@ body.menu-open {
   color: var(--text-main);
 }
 
+.catalog-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .catalog-count {
   font-size: 0.85rem;
   color: var(--text-muted);
   font-weight: 500;
+}
+
+.btn-open-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(255, 252, 248, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(31, 41, 55, 0.05);
+  transition: all 0.2s ease;
+}
+
+.btn-open-note:hover {
+  background: rgba(255, 252, 248, 0.95);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+}
+
+.btn-open-note svg {
+  color: var(--accent-primary);
+}
+
+/* Product Card Discount & Original Price */
+.product-discount-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  line-height: 1;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+}
+
+.product-price-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.product-original-price {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  font-weight: 500;
+  line-height: 1.1;
+  opacity: 0.85;
+}
+
+.product-price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.product-qty {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Glassmorphism Announcement Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.glass-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 252, 248, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 
+    0 20px 40px rgba(15, 23, 42, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(135%);
+  -webkit-backdrop-filter: blur(20px) saturate(135%);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalZoomIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.glass-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.glass-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.glass-modal-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.glass-modal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.glass-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.glass-modal-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #DC2626;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.glass-modal-body {
+  padding: 1.25rem;
+  font-size: 0.925rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.glass-modal-footer {
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.glass-modal-btn {
+  padding: 0.625rem 1.35rem;
+  background: var(--accent-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+  transition: all 0.2s ease;
+}
+
+.glass-modal-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(236, 72, 153, 0.45);
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalZoomIn {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 /* Product Grid */

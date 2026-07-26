@@ -32,6 +32,7 @@ $name = $product['name'];
 $brand = $product['brand'];
 $categoryId = $product['category_id'];
 $price = $product['price'];
+$originalPrice = $product['original_price'];
 $quantity = $product['quantity'];
 $isActive = (int)$product['is_active'];
 $currentImagePath = $product['image_path'];
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $brand = $_POST['brand'] ?? '';
         $categoryId = $_POST['category_id'] ?? '';
         $price = $_POST['price'] ?? '';
+        $originalPrice = $_POST['original_price'] ?? '';
         $quantity = $_POST['quantity'] ?? '';
         $isActive = isset($_POST['is_active']) ? 1 : 0;
 
@@ -65,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name = :name,
                         brand = :brand,
                         price = :price,
+                        original_price = :original_price,
                         quantity = :quantity,
                         image_path = :image_path,
                         is_active = :is_active,
@@ -77,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':name' => $validation['data']['name'],
                     ':brand' => $validation['data']['brand'],
                     ':price' => $validation['data']['price'],
+                    ':original_price' => $validation['data']['original_price'],
                     ':quantity' => $validation['data']['quantity'],
                     ':image_path' => $imagePath,
                     ':is_active' => $validation['data']['is_active'],
@@ -96,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Produk - <?= SITE_NAME ?></title>
+  <link rel="icon" type="image/png" href="/assets/image/favicon.png?v=<?= file_exists(PUBLIC_DIR . '/assets/image/favicon.png') ? filemtime(PUBLIC_DIR . '/assets/image/favicon.png') : time() ?>">
   <link rel="stylesheet" href="/assets/css/style.css">
   <script src="/assets/js/app.js" defer></script>
   <script src="/assets/js/admin.js" defer></script>
@@ -152,13 +157,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="filter-grid" style="margin-bottom: 0;">
           <div class="form-group">
-            <label for="price" class="form-label">Harga (Rupiah) *</label>
+            <label for="price" class="form-label">Harga Jual (Rupiah) *</label>
             <input type="number" step="1000" min="0" name="price" id="price" class="form-control" value="<?= sanitize((string)$price) ?>" required>
             <?php if (isset($errors['price'])): ?>
               <div class="form-error"><?= sanitize($errors['price']) ?></div>
             <?php endif; ?>
           </div>
 
+          <div class="form-group">
+            <label for="original_price" class="form-label">Harga Coret / Original (Optional)</label>
+            <input type="number" step="1000" min="0" name="original_price" id="original_price" class="form-control" value="<?= sanitize((string)$originalPrice) ?>" placeholder="Contoh: 450000">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Isi jika produk diskon (akan ditampilkan dicoret).
+            </div>
+            <?php if (isset($errors['original_price'])): ?>
+              <div class="form-error"><?= sanitize($errors['original_price']) ?></div>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <div class="filter-grid" style="margin-bottom: 0; margin-top: 0.5rem;">
           <div class="form-group">
             <label for="quantity" class="form-label">Quantity (Stok) *</label>
             <input type="number" min="0" name="quantity" id="quantity" class="form-control" value="<?= sanitize((string)$quantity) ?>" required>

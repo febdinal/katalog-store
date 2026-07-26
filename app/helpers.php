@@ -111,10 +111,25 @@ function getProductImageUrl(?string $imagePath): string {
     return '/assets/images/placeholder.svg';
 }
 
+function ensureDatabaseSchema(): void {
+    static $migrated = false;
+    if ($migrated) return;
+    $db = getDb();
+    try {
+        // Automatically ensure original_price column exists on products table
+        $db->exec("ALTER TABLE products ADD COLUMN original_price DECIMAL(15,2) DEFAULT NULL AFTER price");
+    } catch (\Throwable $e) {
+        // Ignore if column already exists
+    }
+    $migrated = true;
+}
+
 function renderAdminHeader(string $activeNav = ''): void {
+    ensureDatabaseSchema();
     $overviewActive = ($activeNav === 'overview') ? ' active' : '';
     $productsActive = ($activeNav === 'products') ? ' active' : '';
     $categoriesActive = ($activeNav === 'categories') ? ' active' : '';
+    $notesActive = ($activeNav === 'notes') ? ' active' : '';
     $backgroundActive = ($activeNav === 'background') ? ' active' : '';
     $musicActive = ($activeNav === 'music') ? ' active' : '';
     
@@ -142,6 +157,7 @@ function renderAdminHeader(string $activeNav = ''): void {
         <a href="/admin/index.php" class="admin-nav-item{$overviewActive}">Overview</a>
         <a href="/admin/products/" class="admin-nav-item{$productsActive}">Produk</a>
         <a href="/admin/categories/" class="admin-nav-item{$categoriesActive}">Kategori</a>
+        <a href="/admin/notes.php" class="admin-nav-item{$notesActive}">Catatan Modal</a>
         <a href="/admin/background.php" class="admin-nav-item{$backgroundActive}">Background</a>
         <a href="/admin/music.php" class="admin-nav-item{$musicActive}">Musik</a>
         <a href="/" target="_blank" rel="noopener noreferrer" class="admin-nav-item">Lihat Web</a>
@@ -173,6 +189,7 @@ function renderAdminHeader(string $activeNav = ''): void {
       <a href="/admin/index.php" class="admin-drawer-item{$overviewActive}">Overview</a>
       <a href="/admin/products/" class="admin-drawer-item{$productsActive}">Produk</a>
       <a href="/admin/categories/" class="admin-drawer-item{$categoriesActive}">Kategori</a>
+      <a href="/admin/notes.php" class="admin-drawer-item{$notesActive}">Catatan Modal</a>
       <a href="/admin/background.php" class="admin-drawer-item{$backgroundActive}">Background</a>
       <a href="/admin/music.php" class="admin-drawer-item{$musicActive}">Musik</a>
       <a href="/" target="_blank" rel="noopener noreferrer" class="admin-drawer-item">Lihat Web</a>
